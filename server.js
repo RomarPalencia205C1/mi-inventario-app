@@ -1,10 +1,12 @@
+// 1. CARGAMOS LAS VARIABLES DE ENTORNO (Lo primero de todo)
+require('dotenv').config(); 
+
 const express = require('express');
 const { Pool } = require('pg');
 const cors = require('cors');
-const path = require('path'); // Nuevo: Para manejar rutas de archivos
+const path = require('path');
 
 const app = express();
-// El puerto lo decide la nube (process.env.PORT) o usa 3000 si es local
 const port = process.env.PORT || 3000;
 
 // Middlewares
@@ -13,10 +15,17 @@ app.use(express.json());
 // Nuevo: Servir los archivos de la carpeta "public" (tu HTML)
 app.use(express.static('public'));
 
-// Configuración de la Base de Datos (Adaptable a Nube y Local)
+// 2. CONFIGURACIÓN DE LA BASE DE DATOS (Universal)
+// Detectamos si estamos en producción (Nube) o desarrollo (Local) para el SSL
+const isProduction = process.env.NODE_ENV === 'production';
+
+const connectionString = process.env.DATABASE_URL; 
+
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL, // La nube nos dará esta URL secreta
-  ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false // SSL necesario en la nube
+  connectionString: connectionString,
+  // SSL: Es obligatorio en Render/Neon, pero da error en Localhost.
+  // Esta lógica dice: "Si la URL tiene 'localhost', NO uses SSL. Si no, SÍ úsalo."
+  ssl: connectionString.includes('localhost') ? false : { rejectUnauthorized: false }
 });
 
 // --- RUTAS ---
