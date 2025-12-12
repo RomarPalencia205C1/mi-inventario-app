@@ -1,0 +1,19 @@
+/* public/css/styles.css */
+
+/* Animación suave al pasar el mouse sobre los productos */
+li {
+    transition: all 0.3s ease;
+}
+
+li:hover {
+    transform: translateX(5px);
+    border-left: 4px solid #3b82f6;
+}
+
+/* Clases de utilidad extra si las necesitas en el futuro */
+.cargando {
+    color: #94a3b8;
+    text-align: center;
+    padding: 2rem;
+    font-style: italic;
+}
